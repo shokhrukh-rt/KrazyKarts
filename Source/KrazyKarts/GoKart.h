@@ -48,8 +48,13 @@ private:
 	UPROPERTY(EditAnywhere)
 	float MaxDrivingForce = 10000;
 
+	// Drag Coefficient (kg/m)
+	UPROPERTY(EditAnywhere)
+	float DragCoefficient = 16;
+
 	float Throttle;
 	float TurnValue;
+	FVector GetAirResistance();
 
 	FVector Velocity;
 
