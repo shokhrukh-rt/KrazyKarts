@@ -21,11 +21,7 @@ protected:
 
 public:	
 	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	
-
-	
+	virtual void Tick(float DeltaTime) override;	
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -37,8 +33,14 @@ public:
 
 private:
 
+	// Functions
+
 	void UpdateLocationFromVelocity(float DeltaTime);
 	void ApplyRotation(float DeltaTime);
+	FVector GetRollingResistance();
+	FVector GetAirResistance();
+
+	// UPROPERTY Variables
 	
 	// Mass of the car in kgs
 	UPROPERTY(EditAnywhere)
@@ -52,14 +54,22 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DragCoefficient = 16;
 
-	float Throttle;
-	float TurnValue;
-	FVector GetAirResistance();
-
-	FVector Velocity;
+	// Rolling Resistance Coefficient (N)
+	UPROPERTY(EditAnywhere)
+	float RollingResistanceCoefficient = 0.015;
 
 	// Max Rotation degrees per second
 	UPROPERTY(EditAnywhere)
 	float MaxDegreesPerSecond = 90;
+
+
+	// Variables
+
+	float Throttle;
+	float TurnValue;
+	FVector Velocity;
+	
+
+	
 
 };
