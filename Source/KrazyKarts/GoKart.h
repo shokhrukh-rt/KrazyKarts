@@ -58,13 +58,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	float RollingResistanceCoefficient = 0.015;
 
-	// Max Rotation degrees per second
+	// Minimum Turning Radius of car turning circle at full lock (m)
 	UPROPERTY(EditAnywhere)
-	float MaxDegreesPerSecond = 90;
+	float MinTurningRadius = 10;
 
 
 	// Variables
 
+	float DeltaDegrees;
 	float Throttle;
 	float TurnValue;
 	FVector Velocity;

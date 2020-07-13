@@ -47,8 +47,9 @@ FVector AGoKart::GetAirResistance() {
 // Apply Rotation
 void AGoKart::ApplyRotation(float DeltaTime)
 {
-	float RotationAngle = MaxDegreesPerSecond * DeltaTime * TurnValue;
-	FQuat DeltaRotation(GetActorUpVector(), FMath::DegreesToRadians(RotationAngle));
+	float DeltaLocation = FVector::DotProduct(GetActorForwardVector(), Velocity) * DeltaTime;
+	float RotationAngle = DeltaLocation / MinTurningRadius * TurnValue; 
+	FQuat DeltaRotation(GetActorUpVector(), RotationAngle);
 	AddActorWorldRotation(DeltaRotation);
 
 	Velocity = DeltaRotation.RotateVector(Velocity);
