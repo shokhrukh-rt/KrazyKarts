@@ -4,6 +4,7 @@
 #include "GoKart.h"
 #include "Components/InputComponent.h"
 #include "Engine/World.h"
+#include "DrawDebugHelpers.h"
 
 // Sets default values
 AGoKart::AGoKart()
@@ -20,6 +21,26 @@ void AGoKart::BeginPlay()
 	
 }
 
+// Get Actor Roles
+FString GetActorRole(ENetRole Role) 
+{
+	
+	switch (Role)
+	{
+	case ROLE_None:
+		return "Role_None";
+	case ROLE_SimulatedProxy:
+		return "Simulated Proxy";
+	case ROLE_AutonomousProxy:
+		return "Autonomous Proxy";
+	case ROLE_Authority:
+		return "Authority";
+	default:
+		return "ERROR";
+	}
+
+
+}
 // Called every frame
 void AGoKart::Tick(float DeltaTime)
 {
@@ -32,8 +53,17 @@ void AGoKart::Tick(float DeltaTime)
 
 	Velocity = Velocity + Acceleration * DeltaTime;
 
+	DrawDebugString(
+		GetWorld(),
+		FVector(0,0,100),
+		GetActorRole(Role),
+		this,
+		FColor::Red,
+		DeltaTime
+	);
 	ApplyRotation(DeltaTime);
 	UpdateLocationFromVelocity(DeltaTime);
+
 
 }
 
@@ -84,16 +114,33 @@ void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
 void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::Server_MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::Server_MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
 
 }
 
 
 // MoveForward
+void AGoKart::MoveForward(float Value)
+{
+	Throttle = Value;
+	Server_MoveForward(Value);
+}
+
+
+// MoveRight
+void AGoKart::MoveRight(float Value)
+{
+	TurnValue = Value;
+	Server_MoveRight(Value);
+}
+
+
+// MoveForward_Implementation
 void AGoKart::Server_MoveForward_Implementation(float Value) 
 {
 	Throttle = Value;
+	
 }
 
 // Validate MoveForward
@@ -114,3 +161,5 @@ bool AGoKart::Server_MoveRight_Validate(float Value) {
 
 	return FMath::Abs(Value) <= 1;
 }
+
+
