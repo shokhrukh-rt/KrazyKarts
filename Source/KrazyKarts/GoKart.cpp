@@ -39,8 +39,8 @@ void AGoKart::Tick(float DeltaTime)
 
 
 // GetAirResistance
-FVector AGoKart::GetAirResistance() {
-
+FVector AGoKart::GetAirResistance() 
+{
 	return -Velocity.GetSafeNormal()*Velocity.SizeSquared()*DragCoefficient;
 }
 
@@ -56,14 +56,13 @@ void AGoKart::ApplyRotation(float DeltaTime)
 }
 
 // Returns Rolling Resistance 
-FVector AGoKart::GetRollingResistance(){
-
+FVector AGoKart::GetRollingResistance()
+{
 	// NormalForce = Mass*g(AccelerationDueToGravity) --(N)
 	// g = -GetWorld()->GetGravityZ() / 100 --(Float)
 	// RollingResistance = RollingResistanceCoefficient * NormalForce -- (N)
 
 	return -Velocity.GetSafeNormal()*RollingResistanceCoefficient* Mass* (-GetWorld()->GetGravityZ() / 100);
-
 }
 
 
@@ -85,22 +84,33 @@ void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
 void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::Server_MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::Server_MoveRight);
 
 }
 
 
 // MoveForward
-void AGoKart::MoveForward(float Value) {
-
+void AGoKart::Server_MoveForward_Implementation(float Value) 
+{
 	Throttle = Value;
-
 }
 
-void AGoKart::MoveRight(float Value) {
+// Validate MoveForward
+bool AGoKart::Server_MoveForward_Validate(float Value) {
 
+	return FMath::Abs(Value) <= 1;
+}
+
+
+// MoveRight_Implementation
+void AGoKart::Server_MoveRight_Implementation(float Value) 
+{
 	TurnValue = Value;
-
 }
 
+// MoveRight Validate
+bool AGoKart::Server_MoveRight_Validate(float Value) {
+
+	return FMath::Abs(Value) <= 1;
+}

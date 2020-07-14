@@ -27,9 +27,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	//MoveForward - called when W key is pressed
-	void MoveForward(float Value);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveForward(float Value);
 
-	void MoveRight(float Value);
+	// MoveRight or Left depending on the Value
+	UFUNCTION(Server, Reliable, WithValidation)
+	void Server_MoveRight(float Value);
 
 private:
 
