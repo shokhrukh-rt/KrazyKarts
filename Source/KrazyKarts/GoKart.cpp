@@ -20,6 +20,7 @@ AGoKart::AGoKart()
 void AGoKart::BeginPlay()
 {
 	Super::BeginPlay();
+	NetUpdateFrequency = 1;
 	
 }
 
@@ -59,13 +60,8 @@ void AGoKart::Tick(float DeltaTime)
 
 	if (HasAuthority()) 
 	{
-		ReplicatedLocation = GetActorLocation();
-		ReplicatedRotation = GetActorRotation();
-	}
-	else
-	{
-		SetActorLocation(ReplicatedLocation);
-		SetActorRotation(ReplicatedRotation);
+		ReplicatedTransform = GetActorTransform();
+		
 	}
 
 	DrawDebugString
@@ -79,6 +75,11 @@ void AGoKart::Tick(float DeltaTime)
 	);
 }
 
+// OnRep_ReplicatedLocation
+void AGoKart::OnRep_ReplicatedTransform()
+{
+	SetActorTransform(ReplicatedTransform);
+}
 
 
 // Called to bind functionality to input
@@ -95,8 +96,7 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AGoKart, ReplicatedLocation);
-	DOREPLIFETIME(AGoKart, ReplicatedRotation);
+	DOREPLIFETIME(AGoKart, ReplicatedTransform);
 }
 
 
