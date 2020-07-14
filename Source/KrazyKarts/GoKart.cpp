@@ -5,12 +5,14 @@
 #include "Components/InputComponent.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "UnrealNetwork.h"
 
 // Sets default values
 AGoKart::AGoKart()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 }
 
@@ -23,8 +25,7 @@ void AGoKart::BeginPlay()
 
 // Get Actor Roles
 FString GetActorRole(ENetRole Role) 
-{
-	
+{	
 	switch (Role)
 	{
 	case ROLE_None:
@@ -38,9 +39,9 @@ FString GetActorRole(ENetRole Role)
 	default:
 		return "ERROR";
 	}
-
-
 }
+
+
 // Called every frame
 void AGoKart::Tick(float DeltaTime)
 {
@@ -53,7 +54,22 @@ void AGoKart::Tick(float DeltaTime)
 
 	Velocity = Velocity + Acceleration * DeltaTime;
 
-	DrawDebugString(
+	ApplyRotation(DeltaTime);
+	UpdateLocationFromVelocity(DeltaTime);
+
+	if (HasAuthority()) 
+	{
+		ReplicatedLocation = GetActorLocation();
+		ReplicatedRotation = GetActorRotation();
+	}
+	else
+	{
+		SetActorLocation(ReplicatedLocation);
+		SetActorRotation(ReplicatedRotation);
+	}
+
+	DrawDebugString
+	(
 		GetWorld(),
 		FVector(0,0,100),
 		GetActorRole(Role),
@@ -61,10 +77,26 @@ void AGoKart::Tick(float DeltaTime)
 		FColor::Red,
 		DeltaTime
 	);
-	ApplyRotation(DeltaTime);
-	UpdateLocationFromVelocity(DeltaTime);
+}
 
 
+
+// Called to bind functionality to input
+void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
+
+}
+
+
+// GetLifetimeReplicatedProps for Location and Rotation
+void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AGoKart, ReplicatedLocation);
+	DOREPLIFETIME(AGoKart, ReplicatedRotation);
 }
 
 
@@ -107,16 +139,6 @@ void AGoKart::UpdateLocationFromVelocity(float DeltaTime)
 	if (OutSweepHitResult.IsValidBlockingHit()) {
 		Velocity = FVector::ZeroVector;
 	}
-}
-
-
-// Called to bind functionality to input
-void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	PlayerInputComponent->BindAxis("MoveForward", this, &AGoKart::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &AGoKart::MoveRight);
-
 }
 
 

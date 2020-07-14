@@ -38,6 +38,14 @@ public:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void Server_MoveRight(float Value);
 
+	// Location ToBeReplicated
+	UPROPERTY(Replicated)
+	FVector ReplicatedLocation;
+
+	// Rotation To Be Replicated
+	UPROPERTY(Replicated)
+	FRotator ReplicatedRotation;
+
 private:
 
 	// Functions
