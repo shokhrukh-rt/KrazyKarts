@@ -79,9 +79,13 @@ private:
 
 	// Variables
 
-	float DeltaDegrees;
+	UPROPERTY(Replicated)
 	float Throttle;
+
+	UPROPERTY(Replicated)
 	float TurnValue;
+
+	UPROPERTY(Replicated)
 	FVector Velocity;
 	
 

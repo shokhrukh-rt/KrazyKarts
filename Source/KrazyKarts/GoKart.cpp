@@ -67,7 +67,7 @@ void AGoKart::Tick(float DeltaTime)
 	DrawDebugString
 	(
 		GetWorld(),
-		FVector(0,0,100),
+		FVector(0,0,160),
 		GetActorRole(Role),
 		this,
 		FColor::Red,
@@ -97,6 +97,9 @@ void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetim
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AGoKart, ReplicatedTransform);
+	DOREPLIFETIME(AGoKart, Velocity);
+	DOREPLIFETIME(AGoKart, Throttle);
+	DOREPLIFETIME(AGoKart, TurnValue);
 }
 
 
