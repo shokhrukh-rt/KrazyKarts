@@ -6,6 +6,42 @@
 #include "GameFramework/Pawn.h"
 #include "GoKart.generated.h"
 
+
+USTRUCT()
+struct FGoKartMove {
+
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	float Throttle;
+
+	UPROPERTY()
+	float TurnValue;
+
+	UPROPERTY()
+	float DeltaTime;
+
+	UPROPERTY()
+	float Time;
+};
+
+
+USTRUCT()
+struct FGoKartState {
+
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY()
+	FTransform Transform;
+
+	UPROPERTY()
+	FVector Velocity;
+
+	UPROPERTY()
+	FGoKartMove LastMove;
+};
+
+
 UCLASS()
 class KRAZYKARTS_API AGoKart : public APawn
 {
@@ -32,25 +68,23 @@ public:
 
 	//MoveForward - called when W key is pressed
 	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveForward(float Value);
+	void Server_SendMove(FGoKartMove Move);
 
-	// MoveRight or Left depending on the Value
-	UFUNCTION(Server, Reliable, WithValidation)
-	void Server_MoveRight(float Value);
-
-	// Transform ToBeReplicated
-	UPROPERTY(ReplicatedUsing = OnRep_ReplicatedTransform)
-	FTransform ReplicatedTransform;
+	// ServerState ToBeReplicated
+	UPROPERTY(ReplicatedUsing = OnRep_ServerState)
+	FGoKartState ServerState;
 
 	UFUNCTION()
-	void OnRep_ReplicatedTransform();
+	void OnRep_ServerState();
 
 private:
 
 	// Functions
 
+	void SimulateMove(FGoKartMove Move);
+
 	void UpdateLocationFromVelocity(float DeltaTime);
-	void ApplyRotation(float DeltaTime);
+	void ApplyRotation(float DeltaTime, float TurnValue);
 	FVector GetRollingResistance();
 	FVector GetAirResistance();
 
@@ -79,16 +113,10 @@ private:
 
 	// Variables
 
-	UPROPERTY(Replicated)
 	float Throttle;
+	
+	float TurnValue;	
 
-	UPROPERTY(Replicated)
-	float TurnValue;
-
-	UPROPERTY(Replicated)
 	FVector Velocity;
-	
-
-	
 
 };
