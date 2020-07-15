@@ -77,14 +77,11 @@ void AGoKart::ClearAcknowledgedMoves(FGoKartMove LastMove)
 {
 	TArray< FGoKartMove> NewUnacknoledgedMoves;
 
-	for (const FGoKartMove Move : UnacknowledgedMoves)
+	for (const FGoKartMove& Move : UnacknowledgedMoves)
 	{
 		if (Move.Time > LastMove.Time)
-		{
-			
-				NewUnacknoledgedMoves.Add(Move);
-			
-			
+		{			
+				NewUnacknoledgedMoves.Add(Move);			
 		}
 	}
 	UnacknowledgedMoves = NewUnacknoledgedMoves;
@@ -96,6 +93,11 @@ void AGoKart::OnRep_ServerState()
 	SetActorTransform(ServerState.Transform);
 	Velocity = ServerState.Velocity;
 	ClearAcknowledgedMoves(ServerState.LastMove);
+
+	for (const FGoKartMove& Move : UnacknowledgedMoves)
+	{
+		SimulateMove(Move);
+	}
 }
 
 
@@ -120,7 +122,7 @@ void AGoKart::GetLifetimeReplicatedProps(TArray< FLifetimeProperty >& OutLifetim
 
 
 // SimulateMove
-void AGoKart::SimulateMove(FGoKartMove Move) 
+void AGoKart::SimulateMove(const FGoKartMove& Move)
 {
 	FVector Force = MaxDrivingForce * Move.Throttle * GetActorForwardVector();
 	Force += GetAirResistance();

@@ -81,7 +81,7 @@ private:
 
 	// Functions
 
-	void SimulateMove(FGoKartMove Move);
+	void SimulateMove(const FGoKartMove& Move);
 	FGoKartMove SetMove(float DeltaTime);
 	void ClearAcknowledgedMoves(FGoKartMove LastMove);
 
