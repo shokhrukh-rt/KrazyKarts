@@ -82,6 +82,8 @@ private:
 	// Functions
 
 	void SimulateMove(FGoKartMove Move);
+	FGoKartMove SetMove(float DeltaTime);
+	void ClearAcknowledgedMoves(FGoKartMove LastMove);
 
 	void UpdateLocationFromVelocity(float DeltaTime);
 	void ApplyRotation(float DeltaTime, float TurnValue);
@@ -112,6 +114,7 @@ private:
 
 
 	// Variables
+	TArray<FGoKartMove> UnacknowledgedMoves;
 
 	float Throttle;
 	

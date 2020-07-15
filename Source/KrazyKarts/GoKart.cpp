@@ -50,11 +50,12 @@ void AGoKart::Tick(float DeltaTime)
 
 	if (IsLocallyControlled()) 
 	{
-		FGoKartMove Move;
-		Move.DeltaTime = DeltaTime;
-		Move.Throttle = Throttle;
-		Move.TurnValue = TurnValue;
-		// TODO: Set time
+		FGoKartMove Move = SetMove(DeltaTime);
+		if (!HasAuthority())
+		{
+			UnacknowledgedMoves.Add(Move);
+		}
+		
 		Server_SendMove(Move);
 		SimulateMove(Move);
 	}	
@@ -70,11 +71,31 @@ void AGoKart::Tick(float DeltaTime)
 	);
 }
 
+
+// ClearAcknowledgedMoves
+void AGoKart::ClearAcknowledgedMoves(FGoKartMove LastMove) 
+{
+	TArray< FGoKartMove> NewUnacknoledgedMoves;
+
+	for (const FGoKartMove Move : UnacknowledgedMoves)
+	{
+		if (Move.Time > LastMove.Time)
+		{
+			
+				NewUnacknoledgedMoves.Add(Move);
+			
+			
+		}
+	}
+	UnacknowledgedMoves = NewUnacknoledgedMoves;
+}
+
 // OnRep_ReplicatedLocation
 void AGoKart::OnRep_ServerState()
 {
 	SetActorTransform(ServerState.Transform);
 	Velocity = ServerState.Velocity;
+	ClearAcknowledgedMoves(ServerState.LastMove);
 }
 
 
@@ -112,6 +133,18 @@ void AGoKart::SimulateMove(FGoKartMove Move)
 
 }
 
+
+// Set the Move
+FGoKartMove AGoKart::SetMove(float DeltaTime) 
+{
+	FGoKartMove Move;
+	Move.DeltaTime = DeltaTime;
+	Move.Throttle = Throttle;
+	Move.TurnValue = TurnValue;
+	Move.Time = GetWorld()->TimeSeconds;
+
+	return Move;
+}
 
 // GetAirResistance
 FVector AGoKart::GetAirResistance() 
