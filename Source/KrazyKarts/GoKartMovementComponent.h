@@ -60,10 +60,12 @@ public:
 	FVector GetVelocity();
 
 	void SimulateMove(const FGoKartMove& Move);
-	FGoKartMove SetMove(float DeltaTime);
+	
+	FGoKartMove GetLastMove() { return LastMove; }
 
 private:	
 	
+	FGoKartMove CreateMove(float DeltaTime);
 	void UpdateLocationFromVelocity(float DeltaTime);
 	void ApplyRotation(float DeltaTime, float TurnValue);
 	FVector GetRollingResistance();
@@ -97,4 +99,5 @@ private:
 	float SteeringThrow;
 
 	FVector Velocity;
+	FGoKartMove LastMove;
 };
