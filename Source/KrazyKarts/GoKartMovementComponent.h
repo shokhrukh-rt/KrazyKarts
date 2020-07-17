@@ -38,9 +38,6 @@ public:
 	// Sets default values for this component's properties
 	UGoKartMovementComponent();
 
-
-	
-
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -55,7 +52,7 @@ public:
 	void SetVelocity(FVector Velocity);
 
 	// Getters
-	float GetThrottel();
+	float GetThrottle();
 	float GetSteeringThrow();
 	FVector GetVelocity();
 

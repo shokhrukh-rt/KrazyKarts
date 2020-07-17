@@ -127,7 +127,7 @@ void UGoKartMovementComponent::SetVelocity(FVector Velo)
 }
 
 // Getters
-float UGoKartMovementComponent::GetThrottel()
+float UGoKartMovementComponent::GetThrottle()
 {
 	return Throttle;
 }

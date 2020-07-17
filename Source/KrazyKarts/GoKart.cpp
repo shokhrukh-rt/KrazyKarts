@@ -3,6 +3,7 @@
 
 #include "GoKart.h"
 #include "Components/InputComponent.h"
+#include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 
 
@@ -12,7 +13,9 @@ AGoKart::AGoKart()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
-	MovementComponent = CreateDefaultSubobject <UGoKartMovementComponent>(TEXT("MovementComponent"));
+	bReplicateMovement = false;
+
+	//Movement = CreateDefaultSubobject <UGoKartMovementComponent>(TEXT("MovementComponent"));
 	MovementReplicator = CreateDefaultSubobject <UGoKartMovementReplicator>(TEXT("MovementReplicator"));
 
 }
@@ -21,7 +24,12 @@ AGoKart::AGoKart()
 void AGoKart::BeginPlay()
 {
 	Super::BeginPlay();
-	NetUpdateFrequency = 1;
+	UE_LOG(LogTemp, Warning, TEXT("BeginPlay is being called"));
+	if (HasAuthority())
+	{
+		NetUpdateFrequency = 1;
+	}
+	
 	
 }
 
@@ -76,16 +84,18 @@ void AGoKart::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 // MoveForward
 void AGoKart::MoveForward(float Value)
 {
-	if (!ensure(MovementComponent != nullptr)) { return; }
-	MovementComponent->SetThrottle(Value);	
+	/*if (!ensure(Movement != nullptr)) { return; }
+	Movement->SetThrottle(Value);	*/
+	UE_LOG(LogTemp, Warning, TEXT("MoveForward is being called"));
 }
 
 
 // MoveRight
 void AGoKart::MoveRight(float Value)
 {
-	if (!ensure(MovementComponent != nullptr)) { return; }
-	MovementComponent->SetSteeringThrow(Value);	
+	/*if (!ensure(Movement != nullptr)) { return; }
+	Movement->SetSteeringThrow(Value);	*/
+	UE_LOG(LogTemp, Warning, TEXT("MoveRight is being called"));
 }
 
 
